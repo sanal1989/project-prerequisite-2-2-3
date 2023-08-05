@@ -1,20 +1,20 @@
 package web.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.ArrayList;
 import java.util.List;
-
+@Entity
 public class Car {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String model;
     private String color;
     private int year;
-    public static List<Car> cars = new ArrayList<>();
-    static {
-        cars.add(new Car("LADA", "WHITE", 2010));
-        cars.add(new Car("BMW", "BLACK", 2020));
-        cars.add(new Car("HONDA", "RED", 2021));
-        cars.add(new Car("HAMMER", "BLACK", 2020));
-        cars.add(new Car("KIA", "WHITE", 2022));
-    }
+
     public Car(String model, String color, int year) {
         this.model = model;
         this.color = color;

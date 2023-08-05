@@ -2,14 +2,161 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <html lang="en">
 <head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <meta charset="UTF-8">
-    <title></title>
+    <title>Users</title>
+    <style>
+        table, th, td {
+            border: black 1px solid;
+        }
+    </style>
 </head>
 <body>
 <div>
-    <th:block th:each="msg : ${messages}">
-        <h1 th:text="${msg}"></h1>
-    </th:block>
+    <table>
+        <thead>
+        <tr>
+            <th>NAME</th><th>LAST NAME</th><th>EMAIL</th><th>CAR MODEL</th><th>CAR YEAR</th><th>CAR COLOR</th><th>EDIT</th><th>DELETE</th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="user : ${users}">
+            <tr>
+                <td th:id = "'tr_fn_' + ${user.id}" th:text="${user.firstName}"></td>
+                <td th:id = "'tr_ln_' + ${user.id}" th:text="${user.lastName}"></td>
+                <td th:id = "'tr_em_' + ${user.id}" th:text="${user.email}"></td>
+                <td th:id = "'tr_cm_' + ${user.id}" th:text="${user.getCar().getModel()}"></td>
+                <td th:id = "'tr_cy_' + ${user.id}" th:text="${user.getCar().getYear()}"></td>
+                <td th:id = "'tr_cc_' + ${user.id}" th:text="${user.getCar().getColor()}"></td>
+                <td><button th:id = "'edit_'+ ${user.id}" th:onclick="'edit_user(' +${user.id} +')'">EDIT</button></td>
+                <td><button th:id = "'delete_'+ ${user.id}" th:onclick="'delete_user(' +${user.id} +')'">DELETE</button></td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+    <form>
+        <label for="firstName">First name:</label><br>
+        <input type="text" value="firstName" id="firstName"><br>
+
+        <label for="lastName">Last name:</label><br>
+        <input type="text" value="lastName" id="lastName"><br>
+
+        <label for="email">First name:</label><br>
+        <input type="text" value="email" id="email"><br>
+
+        <label for="carModel">Car model:</label><br>
+        <input type="text" value="carModel" id="carModel"><br>
+
+        <label for="carYear">Car year:</label><br>
+        <input type="text" value="20" id="carYear"><br>
+
+        <label for="carColor">Car color:</label><br>
+        <input type="text" value="carColor" id="carColor"><br>
+        <button type="button" th:onclick="submitForm()">Submit</button>
+    </form>
 </div>
 </body>
+<script>
+    function delete_user(user_id){
+        let url = "/" + user_id;
+        $.ajax({
+            url: url,
+            type: 'DELETE',
+            success: function (){
+                window.location.reload();
+            }
+        });
+    }
+
+    function submitForm() {
+        // Get form data as JSON
+        const formData = {
+            firstName: $('#firstName').val(),
+            lastName: $('#lastName').val(),
+            email: $('#email').val(),
+            carModel: $('#carModel').val(),
+            carYear: $('#carYear').val(),
+            carColor: $('#carColor').val()
+        };
+
+        // Make POST request using jQuery $.ajax()
+        $.ajax({
+            url: '/edit',
+            method: 'POST',
+            dataType: 'json',
+            contentType: 'application/json;charset=UTF-8',
+            data: JSON.stringify(formData)
+        });
+
+        setTimeout(()=>{
+                document.location.reload();
+        },300);
+    }
+
+    function edit_user(user_id){
+        let id_delete = "#delete_" + user_id;
+        $(id_delete).remove();
+
+        let id_edit = "#edit_" + user_id;
+        let save = "<button id = 'save_" + user_id + "' onclick ='update_user( "+ user_id +")'>SAVE</button>";
+        $(id_edit).parent().html(save);
+        // let property_save_tag = "update_user(" + user_id + ")";
+        // $(id_edit).attr("onclick", property_save_tag);
+
+        let tr_firstN = "#tr_fn_" + user_id;
+        let v_firstN = $(tr_firstN).html();
+        $(tr_firstN).html("<input id ='input_fn_" +user_id+"' type='text' value='"+v_firstN+"'>");
+
+        let tr_lastN = "#tr_ln_" + user_id;
+        let v_tr_lastN = $(tr_lastN).html();
+        $(tr_lastN).html("<input id ='input_ln_" +user_id+"' type='text' value='"+v_tr_lastN+"'>");
+
+        let tr_email = "#tr_em_" + user_id;
+        let v_tr_email = $(tr_email).html();
+        $(tr_email).html("<input id ='input_email_" +user_id+"' type='text' value='"+v_tr_email+"'>");
+
+        let tr_carM = "#tr_cm_" + user_id;
+        let v_carM = $(tr_carM).html();
+        $(tr_carM).html("<input id ='input_carM_" +user_id+"' type='text' value='"+v_carM+"'>");
+
+        let tr_carY = "#tr_cy_" + user_id;
+        let v_carY = $(tr_carY).html();
+        $(tr_carY).html("<input id ='input_carY_" +user_id+"' type='text' value='"+v_carY+"'>");
+
+        let tr_carC = "#tr_cc_" + user_id;
+        let v_tr_carC = $(tr_carC).html();
+        $(tr_carC).html("<input id ='input_carC_" +user_id+"' type='text' value='"+v_tr_carC+"'>");
+    }
+
+    function update_user(user_id){
+        let url = "/" + user_id;
+        let firstName = '#input_fn_' +user_id;
+        let lastName = '#input_ln_' +user_id;
+        let email = '#input_email_' +user_id;
+        let carModel = '#input_carM_' +user_id;
+        let carYear = '#input_carY_' +user_id;
+        let carColor = '#input_carC_' +user_id;
+        const formData = {
+            firstName: $(firstName).val(),
+            lastName: $(lastName).val(),
+            email: $(email).val(),
+            carModel: $(carModel).val(),
+            carYear: $(carYear).val(),
+            carColor: $(carColor).val()
+        };
+
+        // Make POST request using jQuery $.ajax()
+        $.ajax({
+            url: url,
+            method: 'POST',
+            dataType: 'json',
+            contentType: 'application/json;charset=UTF-8',
+            data: JSON.stringify(formData)
+        });
+
+        setTimeout(()=>{
+            document.location.reload();
+        },300);
+    }
+</script>
 </html>
