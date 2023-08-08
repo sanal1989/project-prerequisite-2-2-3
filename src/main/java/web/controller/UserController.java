@@ -3,14 +3,17 @@ package web.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import web.dto.UserDto;
 import web.model.Car;
 import web.model.User;
 import web.service.UserService;
 import web.service.UserServiceImp;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
